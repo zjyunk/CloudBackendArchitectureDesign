@@ -1,6 +1,5 @@
 # 台股技術分析 API
 
-<!-- 用一兩句話描述這個專案，例如：-->
 串接台灣證券交易所（TWSE）公開資料，提供個股技術指標分析的 RESTful API。
 
 ## 功能
@@ -9,14 +8,13 @@
 - 計算技術指標：MA5、MA20、RSI、MACD、KD
 - 提供 RESTful API，支援 Swagger UI 互動式文件
 
-## 技術棧
+## 技術
 
 - **語言**：Python 3.12
 - **框架**：FastAPI
 - **資料來源**：TWSE 證交所公開 API
 - **分析套件**：pandas、ta (Technical Analysis)
 - **容器化**：Docker
-<!-- 如果之後有加 CI/CD、前端等，在這裡補上 -->
 
 ## 安裝與執行
 
@@ -79,8 +77,6 @@ curl http://localhost:8000/stock/analysis/2330
 }
 ```
 
-<!-- 上面的數字是範例，不用改成真實數據 -->
-
 ## 雲端架構圖
 
-<!-- 這裡之後會補上架構圖 -->
+![雲端架構圖](Cloud%20Backend%20Architecture%20Design雲端架構圖.png)
