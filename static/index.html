@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台股技術分析</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, "Microsoft JhengHei", sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 40px 16px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 24px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4a90d9;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: #4a90d9;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover { background: #357abd; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .result {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .result h2 {
+            margin-bottom: 16px;
+            font-size: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        td:first-child {
+            font-weight: bold;
+            color: #666;
+        }
+
+        td:last-child {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>台股技術分析</h1>
+
+        <div class="search-box">
+            <input type="text" id="stockInput" placeholder="輸入股票代號，例如 2330" />
+            <button id="searchBtn" onclick="search()">查詢</button>
+        </div>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        async function search() {
+            const stockNo = document.getElementById("stockInput").value.trim();
+            const output = document.getElementById("output");
+            const btn = document.getElementById("searchBtn");
+
+            if (!stockNo) {
+                output.innerHTML = '<div class="error">請輸入股票代號</div>';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "查詢中...";
+            output.innerHTML = "";
+
+            try {
+                const res = await fetch("/stock/analysis/" + stockNo);
+                const data = await res.json();
+
+                if (!res.ok) {
+                    output.innerHTML = '<div class="error">' + (data.detail || "查詢失敗") + "</div>";
+                    return;
+                }
+
+                output.innerHTML =
+                    '<div class="result">' +
+                    "  <h2>股票 " + data["股票代號"] + " 分析結果</h2>" +
+                    "  <table>" +
+                    "    <tr><td>收盤價</td><td>" + data["收盤價"] + "</td></tr>" +
+                    "    <tr><td>MA5（5日均線）</td><td>" + data["MA5"] + "</td></tr>" +
+                    "    <tr><td>MA20（20日均線）</td><td>" + data["MA20"] + "</td></tr>" +
+                    "    <tr><td>RSI</td><td>" + data["RSI"] + "</td></tr>" +
+                    "    <tr><td>MACD</td><td>" + data["MACD"] + "</td></tr>" +
+                    "    <tr><td>Signal</td><td>" + data["Signal"] + "</td></tr>" +
+                    "    <tr><td>K 值</td><td>" + data["K"] + "</td></tr>" +
+                    "    <tr><td>D 值</td><td>" + data["D"] + "</td></tr>" +
+                    "    <tr><td>成交量</td><td>" + data["成交量"].toLocaleString() + "</td></tr>" +
+                    "  </table>" +
+                    "</div>";
+            } catch (err) {
+                output.innerHTML = '<div class="error">連線失敗，請確認 API 是否啟動</div>';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "查詢";
+            }
+        }
+
+        document.getElementById("stockInput").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") search();
+        });
+    </script>
+</body>
+</html>
