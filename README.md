@@ -79,4 +79,4 @@ curl http://localhost:8000/stock/analysis/2330
 
 ## 雲端架構圖
 
-![雲端架構圖](Cloud%20Backend%20Architecture%20Design雲端架構圖.png)
+![雲端架構圖](雲端架構圖.png)
